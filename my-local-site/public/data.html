@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="images/logo.png" alt="Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/upload.html">Upload</a></li>
+                <li><a href="/data.html">Raw Data</a></li>
+                <li><a href="/analyze.html">Analyze</a></li>
+                <li><a href="/picklist.html">Pick List</a></li>
+                <li><a href="/schedule.html">Schedule</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="content-card">
+        <h2>Uploaded Data:</h2>
+
+        <!-- Reset button placed at the top -->
+        <button id="reset-button">Reset Data</button>
+
+        <!-- Dropdown for selecting team -->
+        <label for="team-select">Filter by Team:</label>
+        <select id="team-select">
+            <option value="all">All Teams</option>
+        </select>
+
+        <div id="output"></div> <!-- This will be used to display the parsed data -->
+    </div>
+
+    <script>
+        // Function to reset data
+        function resetData() {
+            fetch('/reset-data')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    // Check if the response is valid JavaScript
+                    if (text.trim().startsWith('localStorage.clear()')) {
+                        eval(text); // Executes the script to clear localStorage
+                        console.log('Data reset successfully');
+                        location.reload(); // Reload the page to reflect the cleared state
+                    } else {
+                        throw new Error('Invalid response from server');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error resetting data:', error);
+                    alert('Failed to reset data. Please try again or contact support.');
+                });
+        }
+
+        // Attach the resetData function to the button click event
+        document.getElementById('reset-button').addEventListener('click', resetData);
+
+        // Optionally, you can still call resetData on page load if needed
+        // resetData();
+    </script>
+
+    <script src="/data.js"></script> <!-- Script to fetch and display data -->
+</body>
+
+</html>

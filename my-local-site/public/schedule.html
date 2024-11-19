@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="images/logo.png" alt="Logo"> <!-- Placeholder for logo -->
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/upload.html">Upload</a></li>
+                <li><a href="/data.html">Raw Data</a></li>
+                <li><a href="/analyze.html">Analyze</a></li>
+                <li><a href="/picklist.html">Pick List</a></li>
+                <li><a href="/schedule.html">Schedule</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="content-card">
+        <h2>Schedule</h2>
+
+        <!-- Dropdown to filter schedule by team -->
+        <label for="team-select">Filter by Team:</label>
+        <select id="team-select">
+            <option value="all">All Teams</option>
+        </select>
+
+        <!-- Table to display schedule -->
+        <table id="schedule-table">
+            <thead>
+                <tr>
+                    <th>Match</th>
+                    <th>Start Time</th>
+                    <th>Red 1</th>
+                    <th>Red 2</th>
+                    <th>Red 3</th>
+                    <th>Blue 1</th>
+                    <th>Blue 2</th>
+                    <th>Blue 3</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="content-card">
+        <h2>Match Data</h2>
+
+        <!-- Dropdown to select a specific match -->
+        <label for="match-select">Select Match:</label>
+        <select id="match-select">
+            <option value="">Select a Match</option>
+        </select>
+
+        <!-- Table for Red Teams -->
+        <h3>Red Teams</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Red Team 1</th>
+                    <th>Red Team 2</th>
+                    <th>Red Team 3</th>
+                </tr>
+                <tr>
+                    <td id="red1">---</td>
+                    <td id="red2">---</td>
+                    <td id="red3">---</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span>AVG AUTO: <span id="red1-auto">---</span></span><br>
+                        <span>AVG TELEOP: <span id="red1-teleop">---</span></span><br>
+                        <span>AVG ENDGAME: <span id="red1-endgame">---</span></span>
+                    </td>
+                    <td>
+                        <span>AVG AUTO: <span id="red2-auto">---</span></span><br>
+                        <span>AVG TELEOP: <span id="red2-teleop">---</span></span><br>
+                        <span>AVG ENDGAME: <span id="red2-endgame">---</span></span>
+                    </td>
+                    <td>
+                        <span>AVG AUTO: <span id="red3-auto">---</span></span><br>
+                        <span>AVG TELEOP: <span id="red3-teleop">---</span></span><br>
+                        <span>AVG ENDGAME: <span id="red3-endgame">---</span></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align:right">TOTAL: <span id="red-total">---</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Table for Blue Teams -->
+        <h3>Blue Teams</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Blue Team 1</th>
+                    <th>Blue Team 2</th>
+                    <th>Blue Team 3</th>
+                </tr>
+                <tr>
+                    <td id="blue1">---</td>
+                    <td id="blue2">---</td>
+                    <td id="blue3">---</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span>AVG AUTO: <span id="blue1-auto">---</span></span><br>
+                        <span>AVG TELEOP: <span id="blue1-teleop">---</span></span><br>
+                        <span>AVG ENDGAME: <span id="blue1-endgame">---</span></span>
+                    </td>
+                    <td>
+                        <span>AVG AUTO: <span id="blue2-auto">---</span></span><br>
+                        <span>AVG TELEOP: <span id="blue2-teleop">---</span></span><br>
+                        <span>AVG ENDGAME: <span id="blue2-endgame">---</span></span>
+                    </td>
+                    <td>
+                        <span>AVG AUTO: <span id="blue3-auto">---</span></span><br>
+                        <span>AVG TELEOP: <span id="blue3-teleop">---</span></span><br>
+                        <span>AVG ENDGAME: <span id="blue3-endgame">---</span></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align:right">TOTAL: <span id="blue-total">---</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/get-schedule');
+                const { schedule, teams } = await response.json();
+
+                const teamSelect = document.getElementById('team-select');
+                const tableBody = document.querySelector('#schedule-table tbody');
+                const matchSelect = document.getElementById('match-select');
+
+                // Fetch team data from localStorage
+                const storedData = localStorage.getItem('parsedData');
+                const teamData = storedData ? JSON.parse(storedData) : [];
+
+                // Calculate average auto score for a team
+                function calculateAvgAutoScore(teamNumber) {
+                    const teamMatches = teamData.filter(entry => entry.Team == teamNumber);
+                    if (teamMatches.length === 0) return 0;
+
+                    const totalAutoScore = teamMatches.reduce((sum, match) => {
+                        return sum + (
+                            parseInt(match['AUTO_Left_Zone'] || 0) +
+                            parseInt(match['AUTO_Speaker'] || 0) +
+                            parseInt(match['AUTO_Amp'] || 0) +
+                            parseInt(match['AUTO_Trap'] || 0)
+                        );
+                    }, 0);
+
+                    return parseFloat((totalAutoScore / teamMatches.length).toFixed(2));
+                }
+
+                // Calculate average teleop score for a team
+                function calculateAvgTeleopScore(teamNumber) {
+                    const teamMatches = teamData.filter(entry => entry.Team == teamNumber);
+                    if (teamMatches.length === 0) return 0;
+
+                    const totalTeleopScore = teamMatches.reduce((sum, match) => {
+                        return sum + Object.entries(match).reduce((teleopSum, [key, value]) => {
+                            if (key.startsWith('TELE_') && key !== 'TELE_Missed') {
+                                return teleopSum + parseInt(value || 0);
+                            }
+                            return teleopSum;
+                        }, 0);
+                    }, 0);
+
+                    return parseFloat((totalTeleopScore / teamMatches.length).toFixed(2));
+                }
+
+                // Calculate average endgame score for a team
+                function calculateAvgEndgameScore(teamNumber) {
+                    const teamMatches = teamData.filter(entry => entry.Team == teamNumber);
+                    if (teamMatches.length === 0) return 0;
+
+                    const totalEndgameScore = teamMatches.reduce((sum, match) => {
+                        return sum + Object.entries(match).reduce((endgameSum, [key, value]) => {
+                            if (key.startsWith('ENDGAME_') && key !== 'ENDGAME_Failed_Climb') {
+                                return endgameSum + parseInt(value || 0);
+                            }
+                            return endgameSum;
+                        }, 0);
+                    }, 0);
+
+                    return parseFloat((totalEndgameScore / teamMatches.length).toFixed(2));
+                }
+
+                // Calculate total score for an alliance
+                function calculateAllianceTotal(team1, team2, team3) {
+                    const total = [team1, team2, team3].reduce((sum, team) => {
+                        return sum + calculateAvgAutoScore(team) + calculateAvgTeleopScore(team) + calculateAvgEndgameScore(team);
+                    }, 0);
+                    return total.toFixed(2);
+                }
+
+                // Populate the team dropdown
+                teams.forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team;
+                    option.textContent = team;
+                    teamSelect.appendChild(option);
+                });
+
+                // Populate the match dropdown with match numbers
+                schedule.forEach(row => {
+                    const option = document.createElement('option');
+                    option.value = row.Match;
+                    option.textContent = row.Match;
+                    matchSelect.appendChild(option);
+                });
+
+                // Function to update the table with the filtered schedule
+                function updateTable(filteredSchedule) {
+                    tableBody.innerHTML = ''; // Clear previous rows
+
+                    filteredSchedule.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${row.Match}</td>
+                            <td>${row["Start Time"]}</td>
+                            <td>${row["Red 1"]}</td>
+                            <td>${row["Red 2"]}</td>
+                            <td>${row["Red 3"]}</td>
+                            <td>${row["Blue 1"]}</td>
+                            <td>${row["Blue 2"]}</td>
+                            <td>${row["Blue 3"]}</td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                }
+
+                // Display all matches by default
+                updateTable(schedule);
+
+                // Event listener for team filtering
+                teamSelect.addEventListener('change', () => {
+                    const selectedTeam = teamSelect.value;
+
+                    if (selectedTeam === 'all') {
+                        updateTable(schedule);
+                    } else {
+                        const filteredSchedule = schedule.filter(row => {
+                            return (
+                                row["Red 1"] == selectedTeam || row["Red 2"] == selectedTeam || row["Red 3"] == selectedTeam ||
+                                row["Blue 1"] == selectedTeam || row["Blue 2"] == selectedTeam || row["Blue 3"] == selectedTeam
+                            );
+                        });
+                        updateTable(filteredSchedule);
+                    }
+                });
+
+                // Event listener for match selection to populate Red and Blue teams
+                matchSelect.addEventListener('change', () => {
+                    const selectedMatch = matchSelect.value;
+                    const selectedMatchData = schedule.find(row => row.Match === selectedMatch);
+
+                    if (selectedMatchData) {
+                        // Update red teams
+                        ['red1', 'red2', 'red3'].forEach((id, index) => {
+                            const teamNumber = selectedMatchData[`Red ${index + 1}`];
+                            document.getElementById(id).textContent = teamNumber || '---';
+                            document.getElementById(`${id}-auto`).textContent = calculateAvgAutoScore(teamNumber);
+                            document.getElementById(`${id}-teleop`).textContent = calculateAvgTeleopScore(teamNumber);
+                            document.getElementById(`${id}-endgame`).textContent = calculateAvgEndgameScore(teamNumber);
+                        });
+
+                        // Update blue teams
+                        ['blue1', 'blue2', 'blue3'].forEach((id, index) => {
+                            const teamNumber = selectedMatchData[`Blue ${index + 1}`];
+                            document.getElementById(id).textContent = teamNumber || '---';
+                            document.getElementById(`${id}-auto`).textContent = calculateAvgAutoScore(teamNumber);
+                            document.getElementById(`${id}-teleop`).textContent = calculateAvgTeleopScore(teamNumber);
+                            document.getElementById(`${id}-endgame`).textContent = calculateAvgEndgameScore(teamNumber);
+                        });
+
+                        // Calculate and update alliance totals
+                        document.getElementById('red-total').textContent = calculateAllianceTotal(
+                            selectedMatchData["Red 1"],
+                            selectedMatchData["Red 2"],
+                            selectedMatchData["Red 3"]
+                        );
+                        document.getElementById('blue-total').textContent = calculateAllianceTotal(
+                            selectedMatchData["Blue 1"],
+                            selectedMatchData["Blue 2"],
+                            selectedMatchData["Blue 3"]
+                        );
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching schedule:', error);
+            }
+        });
+    </script>
+
+</body>
+
+</html>

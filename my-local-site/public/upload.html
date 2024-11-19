@@ -1,0 +1,53 @@
+<!-- upload.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Excel</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to the external CSS file -->
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="images/logo.png" alt="Logo"> <!-- Placeholder for logo -->
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/upload.html">Upload</a></li>
+                <li><a href="/data.html">Raw Data</a></li>
+                <li><a href="/analyze.html">Analyze</a></li>
+                <li><a href="/picklist.html">Pick List</a></li>
+                <li><a href="/schedule.html">Schedule</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="content-card">
+        <h2>Upload Excel Files</h2>
+
+        <!-- Form to upload scouting data -->
+        <form id="upload-form" enctype="multipart/form-data">
+            <h3>Upload Scouting Data</h3>
+            <input type="file" id="file-input" name="file" accept=".xlsx, .xls" />
+            <button type="submit">Upload Scouting Data</button>
+        </form>
+
+        <!-- Form to upload schedule -->
+        <form id="schedule-upload-form" enctype="multipart/form-data">
+            <h3>Upload Schedule</h3>
+            <input type="file" id="schedule-file-input" name="file" accept=".xlsx, .xls" />
+            <button type="submit">Upload Schedule</button>
+        </form>
+
+        <!-- Div to display parsed data -->
+        <div id="output"></div>
+    </div>
+
+    <script src="/upload.js"></script>
+</body>
+
+</html>

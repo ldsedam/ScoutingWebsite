@@ -1,0 +1,123 @@
+body {
+    background: url('images/background-image.jpg') no-repeat center center fixed,
+        linear-gradient(to bottom, #004080, #00aaff);
+    background-size: cover;
+    font-family: 'Arial', sans-serif;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #0F1031;
+    padding: 5px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+}
+
+.logo img {
+    height: 80px;
+    margin-right: 20px;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+header nav ul li {
+    margin-left: 20px;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    /* New font style */
+    font-size: 20px;
+    /* Updated font size */
+    padding: 10px 15px;
+    /* Padding for a button-like appearance */
+    border-radius: 5px;
+    /* Rounded corners */
+    transition: background-color 0.3s;
+    /* Smooth transition for hover effect */
+}
+
+header nav ul li a:hover {
+    background-color: #333333;
+    /* Dark gray hover effect */
+    color: #ffffff;
+    /* Ensure text color contrasts well on hover */
+}
+
+/* Add this to your styles.css */
+
+.content-card {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: black;
+    max-height: 70vh;
+    /* Set a maximum height relative to viewport */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+}
+
+button {
+    background-color: #00aaff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0088cc;
+}
+
+#reset-button {
+    margin-top: 20px;
+    /* Adds 20px of space above the button */
+    padding: 10px 20px;
+    /* Optional: Add padding to the button for better appearance */
+    background-color: #00aaff;
+    /* Button background color */
+    color: white;
+    /* Button text color */
+    border: none;
+    /* Remove border */
+    border-radius: 5px;
+    /* Rounded corners */
+    cursor: pointer;
+    /* Change cursor to pointer on hover */
+}
+
+#reset-button:hover {
+    background-color: #0088cc;
+    /* Darker shade on hover */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+h3 {
+    margin-top: 30px;
+}
